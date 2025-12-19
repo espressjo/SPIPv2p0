@@ -1,0 +1,5 @@
+#ifndef ASTRO_ERROR_CODE_H
+#define ASTRO_ERROR_CODE_H
+
+enum astro_error {AEC_WRONG_ARGUMENT=1,AEC_HRDW_ISSUE,AEC_HRDW_BUSY};
+#endif

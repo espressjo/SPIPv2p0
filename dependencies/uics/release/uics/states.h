@@ -1,0 +1,7 @@
+#ifndef STATES_H
+#define STATES_H
+#include <vector>
+
+enum STATE {ACQ=0,IDLE,CONFIG,INIT,THREAD,UNKNOWN_STATE};
+enum STATUS {STANBY=0,LOADED,ONLINE};
+#endif // STATES_H

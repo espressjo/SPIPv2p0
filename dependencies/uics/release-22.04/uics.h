@@ -1,0 +1,24 @@
+#ifndef UICS_H
+#define UICS_H
+#include <uics/uics_fits.h>
+#include <uics/state_handler.h>
+#include <uics/fhtable.h>
+#include <uics/uics_cmds.h>
+#include <uics/states.h>
+#include <uics/uics_arguments.h>
+#include <uics/uics_err_code.h>
+#include <uics/uics_state.h>
+#include <uics/udp_msghandler.h>
+#include <uics/b64.h>
+#include <uics/inst_log.h>
+#include <uics/uics_config.h>
+#include <uics/uics_join.h>
+#include <uics/uics_sndmsg.h>
+#include <uics/uics_number.h>
+#include <uics/inst_time.h>
+#include <uics/msghandler.h>
+#include <uics/uics_main.h>
+#include <uics/uics_sockets.h>
+#include <uics/client_socket.h>
+#include <uics/uics_header.h>
+#endif

@@ -1,0 +1,19 @@
+#ifndef LIBOPTIM_H
+#define LIBOPTIM_H
+#include <optim/fpa_reset.h>
+#include <optim/asicbias.h>
+#include <optim/asic_preamp.h>
+#include <optim/register.h>
+#include <optim/asic_register_name.h>
+#include <optim/preamp_tension.h>
+#include <optim/multiplexer.h>
+#include <optim/gain_mapping.h>
+#include <optim/common_register.h>
+#include <optim/telemetry.h>
+#include <optim/asic_register.h>
+#include <optim/preamp_t.h>
+#include <optim/low_pass_filter.h>
+#include <optim/telemetry_sca_def.h>
+#include <optim/main_refCurrent.h>
+#include <optim/asicio.h>
+#endif

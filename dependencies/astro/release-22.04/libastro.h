@@ -1,0 +1,25 @@
+#ifndef LIBASTRO_H
+#define LIBASTRO_H
+#include <astro/telemetry_t.h>
+#include <astro/macie_acquisition.h>
+#include <astro/preamp.h>
+#include <astro/hxrg_init_config.h>
+#include <astro/astro_error_code.h>
+#include <astro/telemetry_cmd.h>
+#include <astro/column_deselect.h>
+#include <astro/registers_header.h>
+#include <astro/asic_optim_cmd.h>
+#include <astro/macie_init.h>
+#include <astro/regdef.h>
+#include <astro/macie_errors.h>
+#include <astro/hdwr_status_t.h>
+#include <astro/astro_extra.h>
+#include <astro/c_status.h>
+#include <astro/multiplexer_cmd.h>
+#include <astro/hxrgerrcode.h>
+#include <astro/macie_register_utils.h>
+#include <astro/astro_std_cmd.h>
+#include <astro/macie_firmware.h>
+#include <astro/hxrgstatus.h>
+#include <astro/insthandle.h>
+#endif
