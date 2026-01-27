@@ -12,7 +12,7 @@ import sys
 from os.path import isfile
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
-from telemetry import create_decoder, get_status
+from spip.telemetry import create_decoder, get_status
 
 fmt = "%Y-%m-%dT%H:%M:%S.%fZ"
 
@@ -42,7 +42,7 @@ without buffer. Python will have a hard time figuring out
 how to interpret the data.
 
 """
-telemetry_decoder = create_decoder(["/opt/spipv2p0/include/spip_telemetry_t.h",], "tel_t")
+telemetry_decoder = create_decoder(["/opt/spipv2p0/include/spip_telemetry_t.h","/usr/local/include/astro/insthandle.h"], "spip_telemetry_t")
 """
 You have to set the cmd.conf full path so that the 
 class knows which command to expect. Please see the section 
@@ -62,7 +62,7 @@ the command in getstatus_t HAS TO return
 
 
 def getstatus_t(ip,port):
-    with astro(ip,port) as _astro:
+    with spip(ip,port) as _astro:
         b64_status = _astro.b64spipstatus()#the right status function
         try:
             length,txt = b64_status.split(" ")
@@ -277,7 +277,7 @@ class AstroCustomMethods:
 # ============================================================================
 
 #class astro(AstroCustomMethods): example of inheritance
-class astro():
+class spip():
     def __init__(self, host, port, buffer_size=4096, timeout=10.0, 
                  config_file=CMDCONFIGFILE):
         '''
@@ -332,7 +332,7 @@ class astro():
             # Create a method for this command
             method = self._create_command_method(cmd_config)
             # Bind it to the instance
-            setattr(self, cmd_name, method.__get__(self, astro))
+            setattr(self, cmd_name, method.__get__(self, spip))
     
     def _create_command_method(self, cmd_config: CommandConfig):
         """Create a method for a specific command configuration"""
@@ -392,7 +392,11 @@ class astro():
             # Parse response based on expected return type
             if expected_return is None:
                 # Only expecting OK/NOK
-                if "OK" in response or "ok" in response.lower():
+                if "NOK" in response or "nok" in response.lower():
+                    
+                    self._add2log(f"Command failed: {response}")
+                    return False
+                elif "OK" in response or "ok" in response.lower():
                     return True
                 else:
                     self._add2log(f"Command failed: {response}")
@@ -735,7 +739,7 @@ if '__main__' == __name__:
     print("=" * 60)
     
     # Create instance (will auto-generate methods from cmd.cfg)
-    astro_client = astro("localhost", 9555, config_file='cmd.cfg')
+    astro_client = spip("localhost", 9555, config_file='cmd.cfg')
     
     # List all generated commands
     astro_client.list_commands()

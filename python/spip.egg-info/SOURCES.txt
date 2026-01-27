@@ -1,7 +1,0 @@
-README.md
-setup.py
-spip.egg-info/PKG-INFO
-spip.egg-info/SOURCES.txt
-spip.egg-info/dependency_links.txt
-spip.egg-info/requires.txt
-spip.egg-info/top_level.txt

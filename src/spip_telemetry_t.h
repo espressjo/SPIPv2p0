@@ -3,13 +3,44 @@
 
 #include "insthandle.h"
 #include <astro/hxrgstatus.h>
+
+#pragma pack(push, 1)
+typedef struct {
+  int isWindow;
+  int isOngoing;
+  bool simulator; // mode 0-> normal acquisition, mode 1-> simulator
+  char type[128]; // type of integration
+  bool im_ready;
+  int asBeenInit; // start     //0-> never initialized, 1-> MACIE_INIT() has
+                  // been called, this is true after the 1st few seconds of
+                  // init, 2-> the whole init sequence is done and successfull.
+  int isReconfiguring; // 0-> not reconfiguring, 1-> is currently reconfiguring
+
+} status_info_t;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct {
+  bool toponly;
+  bool oddeven;
+  char nonlin_reference[1024]; // full path for nonlin 3 ext file
+  char bias_reference[1024];   // full path for bias reference.
+  bool flag_bias;              // flag for non-linearity correction
+  bool flag_nonlin;            // flag for non-linearity correction
+  bool flag_refpx;             // apply ref. pixel correction.
+  char uid_bias[128];
+  char uid_nonlin[128];
+
+} fits2ramp_t;
+#pragma pack(pop)
+
 #pragma pack(push, 1)
 typedef struct {
 
   int firmware_slot;
-  f2r_c f2r;
+  fits2ramp_t f2r;
   preamp_t preamp;
-  status_t status;
+  status_info_t status;
   char user[128];
   char type[128]; // type of integration
   char object[128];
