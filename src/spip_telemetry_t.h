@@ -18,6 +18,25 @@ typedef struct {
 
 } status_info_t;
 #pragma pack(pop)
+#pragma pack(push, 1)
+typedef struct {
+  uint gain; // initHandle
+  uint HxRG;
+  uint frameX;            // initHandle
+  uint frameY;            // initHandle
+  uint nbOutput;          // initHandle
+  uint preampInputScheme; //(1) Use InPCommon as V1,V2,V4 against InP on V3
+                          //(h4502 and h45c2 for averaged channels, Use input
+                          // configuration based on bit <0> of this register
+  uint preampInputVal;
+  uint windowMode;   // 0->fullframe, 1->window
+  uint columnMode;   // initHandle
+  uint coldWarmMode; // initHandle
+  uint preAmpCap;
+  uint preAmpFilter;
+  uint idle;
+} preamplifier_t;
+#pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct {
@@ -39,7 +58,7 @@ typedef struct {
 
   int firmware_slot;
   fits2ramp_t f2r;
-  preamp_t preamp;
+  preamplifier_t preamp;
   status_info_t status;
   char user[128];
   char type[128]; // type of integration

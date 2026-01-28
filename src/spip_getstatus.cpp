@@ -47,7 +47,32 @@ void spip_status_t(instHandle *handle) {
 
     //:::::::::::::::::::::::::
 
-    tlm.preamp = handle->preamp;
+    // tlm.preamp = handle->preamp;
+    //::::::::::::::::::
+    //:::   Preamp   :::
+    //::::::::::::::::::
+
+    tlm.preamp.gain = handle->preamp.gain; // initHandle
+    tlm.preamp.HxRG = handle->preamp.HxRG;
+    tlm.preamp.frameX = handle->preamp.frameX;     // initHandle
+    tlm.preamp.frameY = handle->preamp.frameY;     // initHandle
+    tlm.preamp.nbOutput = handle->preamp.nbOutput; // initHandle
+    tlm.preamp.preampInputScheme =
+        handle->preamp.preampInputScheme; //(1) Use InPCommon as V1,V2,V4
+                                          // against InP on V3 (h4502 and h45c2
+                                          // for averaged channels, Use input
+                                          // configuration based on bit <0> of
+                                          // this register
+    tlm.preamp.preampInputVal = handle->preamp.preampInputVal;
+    tlm.preamp.windowMode =
+        handle->preamp.windowMode; // 0->fullframe, 1->window
+    tlm.preamp.columnMode = handle->preamp.columnMode;     // initHandle
+    tlm.preamp.coldWarmMode = handle->preamp.coldWarmMode; // initHandle
+    tlm.preamp.preAmpCap = handle->preamp.preAmpCap;
+    tlm.preamp.preAmpFilter = handle->preamp.preAmpFilter;
+    tlm.preamp.idle = handle->preamp.idle;
+    //::::::::::::::::::
+
     memset(tlm.object, 0, 128);
     strcpy(tlm.object, handle->info.OBJET.c_str());
 

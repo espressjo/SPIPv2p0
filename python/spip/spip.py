@@ -42,7 +42,7 @@ without buffer. Python will have a hard time figuring out
 how to interpret the data.
 
 """
-telemetry_decoder = create_decoder(["/opt/spipv2p0/include/spip_telemetry_t.h","/usr/local/include/astro/insthandle.h"], "spip_telemetry_t")
+telemetry_decoder = create_decoder(["/opt/spipv2p0/include/spip_telemetry_t.h","/usr/local/include/astro/insthandle.h","/usr/local/include/astro/telemetry_t.h"], "spip_telemetry_t")
 """
 You have to set the cmd.conf full path so that the 
 class knows which command to expect. Please see the section 
@@ -60,6 +60,56 @@ the command in getstatus_t HAS TO return
     OK <length of encoded data> <b64 encoded message>
 """
 
+def print_status(obj, indent=0, name=None):
+    """
+    Print all members and their values from a Python object (class instance).
+    Handles nested structures recursively.
+    
+    Args:
+        obj: The object to print
+        indent: Current indentation level (for nested structures)
+        name: Name of the current object/attribute being printed
+    """
+    prefix = "  " * indent
+    
+    # Print the object name if provided
+    if name is not None:
+        print(f"{prefix}{name}:")
+        indent += 1
+        prefix = "  " * indent
+    
+    # Get all attributes that don't start with underscore (public attributes)
+    attributes = {k: v for k, v in vars(obj).items() if not k.startswith('_')}
+    
+    for attr_name, attr_value in attributes.items():
+        # Check if the attribute is a custom class instance (has __dict__ and __module__)
+        if hasattr(attr_value, '__dict__') and hasattr(attr_value, '__module__'):
+            # It's a nested structure
+            print(f"{prefix}{attr_name}:")
+            print_status(attr_value, indent + 1)
+        # Check if it's a list or tuple that might contain nested structures
+        elif isinstance(attr_value, (list, tuple)):
+            print(f"{prefix}{attr_name}: [")
+            for i, item in enumerate(attr_value):
+                if hasattr(item, '__dict__') and hasattr(item, '__module__'):
+                    print(f"{prefix}  [{i}]:")
+                    print_status(item, indent + 2)
+                else:
+                    print(f"{prefix}  [{i}]: {item}")
+            print(f"{prefix}]")
+        # Check if it's a dict that might contain nested structures
+        elif isinstance(attr_value, dict):
+            print(f"{prefix}{attr_name}: {{")
+            for key, value in attr_value.items():
+                if hasattr(value, '__dict__') and hasattr(value, '__module__'):
+                    print(f"{prefix}  {key}:")
+                    print_status(value, indent + 2)
+                else:
+                    print(f"{prefix}  {key}: {value}")
+            print(f"{prefix}}}")
+        else:
+            # It's a primitive type or built-in
+            print(f"{prefix}{attr_name}: {attr_value}")
 
 def getstatus_t(ip,port):
     with spip(ip,port) as _astro:
@@ -74,7 +124,18 @@ def getstatus_t(ip,port):
         except:
             print("Fail to fetch telemetry")
         return None
-
+def telemetry_t(ip,port):
+    with spip(ip,port) as _astro:
+        tel_t = _astro.telemetry(b64=True)
+        try:
+            length,txt = tel_t.split(" ")
+            length = int(length)
+            
+            status = get_status(txt, telemetry_decoder)
+            return status
+        except:
+            print("failed to fetch telemetry")
+        return None
 
 class CommandConfig:
     """Represents a single command configuration"""
@@ -171,108 +232,6 @@ def parse_config_file(config_path: str) -> Dict[str, CommandConfig]:
 
 
 # ============================================================================
-# Base class for custom method implementations
-# ============================================================================
-
-class AstroCustomMethods:
-    """
-    Base class containing custom implementations of specific commands.
-    Inherit from this class to override auto-generated methods.
-    """
-    
-    def b64status(self, parse_output=True):
-        """
-        Custom implementation for b64status command.
-        This overrides the auto-generated version.
-        
-        Parameters
-        ----------
-        parse_output : bool, optional
-            If True, parse and structure the output. Default is True.
-            
-        Returns
-        -------
-        dict or str or None : Parsed status dict if parse_output=True, 
-                              raw string if False, None on failure
-        """
-        self._add2log("Getting b64 status (custom implementation)")
-        
-        if self.write("b64status") != 0:
-            return None
-        
-        response = self.read().strip()
-        
-        if "NOK" in response or "nok" in response.lower():
-            self._add2log(f"b64status failed: {response}")
-            return None
-        
-        if not parse_output:
-            return response
-        
-        # Parse the response into structured data
-        status_dict = {}
-        lines = response.split('\n')
-        
-        for line in lines:
-            if ':' in line:
-                key, value = line.split(':', 1)
-                status_dict[key.strip()] = value.strip()
-        
-        return status_dict
-    
-    def telemetry(self, parse=True, **kwargs):
-        """
-        Custom implementation for telemetry command.
-        
-        Parameters
-        ----------
-        parse : bool, optional
-            Parse telemetry data into structured format
-        **kwargs : 
-            all, b64, mux, asic, hxrg arguments
-            
-        Returns
-        -------
-        dict or str or None : Parsed telemetry if parse=True, raw otherwise
-        """
-        self._add2log("Getting telemetry (custom implementation)")
-        
-        cmd_parts = ['telemetry']
-        
-        # Build command
-        if 'all' in kwargs and kwargs['all']:
-            cmd_parts.append('-all')
-        if 'b64' in kwargs and kwargs['b64']:
-            cmd_parts.append('-b64')
-        if 'mux' in kwargs:
-            cmd_parts.extend(['mux', str(int(kwargs['mux']))])
-        if 'asic' in kwargs and kwargs['asic']:
-            cmd_parts.append('-asic')
-        if 'hxrg' in kwargs and kwargs['hxrg']:
-            cmd_parts.append('-hxrg')
-        
-        cmd = ' '.join(cmd_parts)
-        
-        if self.write(cmd) != 0:
-            return None
-        
-        response = self.read().strip()
-        
-        if "NOK" in response:
-            self._add2log(f"telemetry failed: {response}")
-            return None
-        
-        if not parse:
-            return response
-        
-        # Custom parsing logic for telemetry
-        telemetry_dict = {}
-        # Add your custom parsing here
-        
-        return telemetry_dict
-
-
-# ============================================================================
 # Main astro class - inherits custom methods
 # ============================================================================
 
@@ -308,18 +267,10 @@ class spip():
             print(f"Warning: Config file '{config_file}' not found. "
                   "No methods generated.")
     def getstatus_t(self):
-        b64_status = self.getstatus()
-        #check for length 1st
-        length = ""
-        txt = ""
-        print(b64_status)
-        try:
-            check = b64_status.split(" ")
-            print(check)
-        except:
-            print("[debug] failed to decode b64")
-        print(txt)
-        return 
+        return getstatus_t(self.host,self.port)
+    def print_status(self):
+        _status = self.getstatus_t()
+        print_status(_status)
     def _generate_methods(self):
         """Dynamically generate methods for each command in the config"""
         for cmd_name, cmd_config in self._commands.items():
