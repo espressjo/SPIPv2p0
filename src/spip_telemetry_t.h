@@ -35,6 +35,7 @@ typedef struct {
   uint preAmpCap;
   uint preAmpFilter;
   uint idle;
+  
 } preamplifier_t;
 #pragma pack(pop)
 

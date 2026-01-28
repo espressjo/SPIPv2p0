@@ -10,6 +10,8 @@ using namespace std;
 
 Log HxRGlog;
 
+return;
+}
 int main(int argc, char *argv[]) {
   // we nee to override BASEPATH and CONFIGFILE
   set_basepath("/opt/spipv2p0");
