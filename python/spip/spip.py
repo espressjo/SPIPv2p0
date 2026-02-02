@@ -6,8 +6,8 @@ STATUS_DECODER = create_decoder(["/opt/spipv2p0/include/spip_telemetry_t.h","/us
 CMDCONFFILE = '/opt/spipv2p0/config/cmd.conf'
 
 class spip(uics):
-    def __init__(self,host,port,cmd_cfg_file=CMDCONFFILE):
-        super().__init__(host,port,config_file=cmd_cfg_file)    
+    def __init__(self,host,port,cmd_cfg_file=CMDCONFFILE,timeout=60):
+        super().__init__(host,port,config_file=cmd_cfg_file,timeout=timeout)    
     def getstatus(self):
         _b64_status = self.b64spipstatus()#the right status function
         try:
