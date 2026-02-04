@@ -186,7 +186,7 @@ void spip_acquisition(instHandle *handle, cmd *cc) {
     handle->m_status.hdwr_status = hxrgEXP_COMPL_FAILURE;
     goto endacq;
   }
-  if (isHaltTriggered(handle)) {
+  if (handle->macie.haltTriggered != 0) {
     goto endacq;
   }
 
@@ -223,7 +223,7 @@ void spip_acquisition(instHandle *handle, cmd *cc) {
       fits.header.edit_entry("READ", read);
       f2r.fits->header.edit_entry("READ", read);
 
-      if (isHaltTriggered(handle)) {
+      if (handle->macie.haltTriggered != 0) {
         goto endacq;
       }
 
@@ -232,6 +232,9 @@ void spip_acquisition(instHandle *handle, cmd *cc) {
       nbWords = 0;
       nbWords = MACIE_ReadGigeScienceData(handle->macie.handle,
                                           sampling_timeout, buffer_size, pData);
+      if (handle->macie.haltTriggered != 0) {
+        goto endacq;
+      }
 
       //:::::::::::::::::::::::::::::::::::::::::::::::::::
       //:::   For engineering purpose.                  :::
@@ -323,6 +326,9 @@ void spip_acquisition(instHandle *handle, cmd *cc) {
       }
       HxRGlog.writetoVerbose("Fits written successfully.");
     } // read
+    if (handle->macie.haltTriggered != 0) {
+      goto endacq;
+    }
 
     //::::::::::::::::::::::::::::::
     //:::	save the fits2ramp   :::

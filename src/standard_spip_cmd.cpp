@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <libastro.h>
 #include <thread>
 #include <uics/uics_number.h>
 extern Log HxRGlog;
@@ -17,4 +18,21 @@ void testDelay(instHandle *handle, cmd *cc) {
   cc->respond();
 
   return;
+}
+
+void abort_t(instHandle *handle) {
+
+  int fd = create_socket(5026);
+  cmd *cc = new cmd;
+
+  while (1) {
+    cc->recvCMD(fd);
+    if (w_ASIC6900(handle, ASIC_IDLE) != 0) {
+      cc->respond("failed to trigger abort", uicsCMD_ERR_PARAM_UNKNOWN);
+      continue;
+    }
+    handle->macie.haltTriggered = 1;
+    cc->respond();
+    continue;
+  }
 }

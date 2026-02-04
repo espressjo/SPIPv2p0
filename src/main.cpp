@@ -10,8 +10,6 @@ using namespace std;
 
 Log HxRGlog;
 
-return;
-}
 int main(int argc, char *argv[]) {
   // we nee to override BASEPATH and CONFIGFILE
   set_basepath("/opt/spipv2p0");
@@ -65,6 +63,7 @@ int main(int argc, char *argv[]) {
   // UICS.add_thread(cmd_status, &handle, "status", false);
   // UICS.add_thread(cmd_status_b64, &handle, "b64status", false);
   UICS.add_thread(spip_status_t, &handle, "b64spipstatus", false);
+  UICS.add_thread(abort_t, &handle, "abort", false);
 
   //::::::::::::::::::::::::::::::::::::::
   //:::   Define all function to the   :::

@@ -4,4 +4,5 @@
 #include "insthandle.h"
 #include <uics/uics_cmds.h>
 void testDelay(instHandle *handle, cmd *cc);
+void abort_t(instHandle *handle);
 #endif
